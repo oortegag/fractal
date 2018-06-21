@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html> 
+<head> 
+<title>Fractal</title>
+<header><h3>Fractal</h3></header>
+<br>
+<canvas id="plot_frac" width="500" height="500"></canvas>
+<script type="text/javascript">
+    var TrianguloF=function(configObj){
+    this.width=500;
+    this.height=500;
+    this.posX=0;
+    this.posY=0;
+    this.context=null;
+    this.gen=0;
+    this.fractal=function(){
+          this.hijos=new Array();
+          this.hijos.push(new TrianguloF({context:this.context,width:this.width/2,height:this.height/2,posX:this.posX+(this.width/4),posY:this.posY,gen:this.gen+1}));
+          this.hijos.push(new TrianguloF({context:this.context,width:this.width/2,height:this.height/2,posX:this.posX,posY:this.posY+this.height/2, gen:this.gen+1}));
+          this.hijos.push(new TrianguloF({context:this.context,width:this.width/2,height:this.height/2,posX:this.posX+(this.width/2),posY:this.posY+(this.height/2), gen:this.gen+1}));
+    }
+    
+    this.draw = function(){
+                var context = this.context;  
+                context.beginPath();
+                context.moveTo(this.posX+this.width/2, this.posY);
+                context.lineTo(this.posX+this.width, this.posY+this.height);
+                context.lineTo(this.posX, this.posY+this.height);
+                context.lineTo(this.posX+this.width/2, this.posY);
+                context.stroke();
+                this.fractal();
+                this.drawHijos();
+         };
+         
+    this.drawHijos = function(){
+               if(this.gen<10){
+                    for(var i=0;i<this.hijos.length;i++){
+                       this.hijos[i].draw();
+                    }
+                }
+         };
+         
+         this.config=function (obj){
+        
+        for(var p in obj){
+               this[p] = obj[p];
+          }
+        };
+        if(configObj!=undefined){
+         this.config(configObj);
+       }
+    }
+    
+    var c = document.getElementById("plot_frac");
+    var ctx = c.getContext("2d");
+    var tf=new TrianguloF({context:ctx});
+        tf.draw();
+        tf.fractal();
+    </script>
+</html>
